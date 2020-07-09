@@ -179,8 +179,8 @@ begin {
     
         Write-Verbose "Dependency installation done"
 
-        # Exit the script, don't process the Process scriptblock
-        continue
+        # Exit the script, don't process the Process and End scriptblocks
+        exit 0
     }
     
     if ($null -eq (Get-ChildItem 'Env:BH*')) {
