@@ -140,6 +140,9 @@ begin {
             if ($GalleryProxy)      { $InstallPSDependParams.Add('Proxy',$GalleryProxy) }
             if ($GalleryCredential) { $InstallPSDependParams.Add('ProxyCredential',$GalleryCredential) }
             Install-Module @InstallPSDependParams
+            # TEMP FIX
+            $PSDependPath=Split-Path -Parent ((Get-Module PSDepend -listAvailable).Path)
+            Copy-Item .\.Build\Github.ps1 (Join-Path $PSDependPath 'PSDependScripts') -Force
         }
 
         Write-Verbose "Invoking PSDepend (download dependencies)"
