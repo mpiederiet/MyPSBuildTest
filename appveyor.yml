@@ -8,7 +8,7 @@ install:
 build_script:
   - ps: .\module.build.ps1
 # Test with PS core
-  - ps: pwsh.exe -executionpolicy bypass -noprofile -command "import-module chronometer; .\module.build.ps1 test"
+  - pwsh: .\module.build.ps1 test
 # Upload code coverage report to CodeCov.io
   - ps: |
       $env:PATH = 'C:\msys64\usr\bin;' + $env:PATH
