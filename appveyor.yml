@@ -16,9 +16,9 @@ build_script:
 # Test with PS core
 #  - pwsh: .\module.build.ps1 test; exit 0
 # Upload Pester and ScriptAnalyzer output
-  - ps: Get-ChildItem '.\BuildOutput\*.xml' -Exclude 'ScriptAnalyzer_*'|ForEach-Object {(New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", $_)}
+  - ps: Get-ChildItem '.\BuildOutput\*.xml' -Exclude 'CodeCoverage_*'|ForEach-Object {(New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", $_)}
 # Upload code coverage report to CodeCov.io
   - ps: |
       $env:PATH = 'C:\msys64\usr\bin;' + $env:PATH
       Invoke-WebRequest -Uri 'https://codecov.io/bash' -OutFile codecov.sh
-      bash codecov.sh -f "$($Script:CodeCoverageFile)"
+      bash codecov.sh -f ""CodeCoverage*.xml""
