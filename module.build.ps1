@@ -172,19 +172,19 @@ begin {
         Install-Dependencies @Params    
         Write-Verbose "Dependency installation done"
 
+        Write-Verbose "Invoking PSDepend (importing modules)"
+        $PSDependParams = @{
+            Force = $true
+            Path = "$PSScriptRoot/.build/module.requirements.psd1"
+            Import = $true
+        }
+        if($PSBoundParameters.ContainsKey('verbose')) { $PSDependParams.add('verbose',$verbose)}
+        $null=Invoke-PSDepend @PSDependParams
+    
         # Exit the script, don't process the Process and End scriptblocks
         exit 0
     }
-
-    Write-Verbose "Invoking PSDepend (importing modules)"
-    $PSDependParams = @{
-        Force = $true
-        Path = "$PSScriptRoot/.build/module.requirements.psd1"
-        Import = $true
-    }
-    if($PSBoundParameters.ContainsKey('verbose')) { $PSDependParams.add('verbose',$verbose)}
-    $null=Invoke-PSDepend @PSDependParams
-    
+ 
     if ($null -eq (Get-ChildItem 'Env:BH*')) {
         Write-Verbose "Setting Build Environment variables"
         Set-BuildEnvironment -BuildOutput $BuildOutput
