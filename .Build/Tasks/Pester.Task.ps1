@@ -10,6 +10,7 @@ task Pester {
         TestResult = @{
             Enabled = $True
             OutputPath = $PesterTestFile
+            TestSuiteName = (Split-Path -Leaf $PesterTestFile)
         }
         Filter = @{
             Tag = 'Build'
