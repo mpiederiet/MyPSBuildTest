@@ -140,7 +140,7 @@ begin {
             if ($GalleryProxy)      { $InstallPSDependParams.Add('Proxy',$GalleryProxy) }
             if ($GalleryCredential) { $InstallPSDependParams.Add('ProxyCredential',$GalleryCredential) }
             Install-Module @InstallPSDependParams
-            # TEMP FIX
+            # TEMP fix
             $PSDependPath=Split-Path -Parent ((Get-Module PSDepend -listAvailable).Path)
             Copy-Item .\.Build\Github.ps1 (Join-Path $PSDependPath 'PSDependScripts') -Force
         }
@@ -152,6 +152,9 @@ begin {
         }
         if($PSBoundParameters.ContainsKey('verbose')) { $PSDependParams.add('verbose',$verbose)}
         $null=Invoke-PSDepend @PSDependParams
+        # TEMP fix
+        $ExportNUnitXMLPath=Split-Path -Parent ((Get-Module Export-NUnitXML -listAvailable).Path)
+        Copy-Item .\.Build\Export-NUnitXML.psm1 $ExportNUnitXMLPath -Force
     }
 
     if (![io.path]::IsPathRooted($BuildOutput)) {
