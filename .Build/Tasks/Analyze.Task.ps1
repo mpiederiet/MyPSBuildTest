@@ -13,7 +13,7 @@ task Analyze {
         'Please investigate or add the required SuppressMessage attribute.'
         # Export NUnit file if Export-NUnitXML command is available
         if (Get-Command 'Export-NUnitXML' -ErrorAction 'SilentlyContinue') {
-            Export-NUnitXml -ScriptAnalyzerResult $results -Path $Script:ScriptAnalyzerFile -TestName (Split-Path -Leaf $Script:ScriptAnalyzerFile)
+            Export-NUnitXml -ScriptAnalyzerResult $results -Path $Script:ScriptAnalyzerFile -TestFileName (Split-Path -Leaf $Script:ScriptAnalyzerFile)
         }
         $results | Format-Table -AutoSize
     }

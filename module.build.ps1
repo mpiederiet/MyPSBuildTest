@@ -154,7 +154,7 @@ begin {
         $null=Invoke-PSDepend @PSDependParams
         # TEMP fix
         $ExportNUnitXMLPath=Split-Path -Parent ((Get-Module Export-NUnitXML -listAvailable).Path)
-        Copy-Item .\.Build\Export-NUnitXML.psm1 $ExportNUnitXMLPath -Force
+        Copy-Item .\.Build\Export-NUnitXML.psm1 $ExportNUnitXMLPath -Force -whatif
     }
 
     if (![io.path]::IsPathRooted($BuildOutput)) {

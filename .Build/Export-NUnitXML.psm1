@@ -16,7 +16,7 @@
         [Parameter(Mandatory, Position=1)]
         [string]$Path,
 
-        [string]$TestName='PSScriptAnalyzer'
+        [string]$TestFileName='PSScriptAnalyzer'
     )
 
     $TotalNumber = If ($ScriptAnalyzerResult) { $ScriptAnalyzerResult.Count -as [string] } Else { '1' }
@@ -42,7 +42,7 @@
 
     $Header = @"
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<test-results xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="nunit_schema_2.5.xsd" name="$TestName" total="$TotalNumber" errors="0" failures="$FailedNumber" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="$FormattedDate" time="$FormattedTime">
+<test-results xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="nunit_schema_2.5.xsd" name="$TestFileName" total="$TotalNumber" errors="0" failures="$FailedNumber" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="$FormattedDate" time="$FormattedTime">
   <environment user="$User" machine-name="$MachineName" cwd="$Cwd" user-domain="$UserDomain" platform="$Platform" nunit-version="2.5.8.0" os-version="$OSVersion" clr-version="$ClrVersion" />
   <culture-info current-culture="$CurrentCulture" current-uiculture="$UICulture" />
   <test-suite type="Powershell" name="PSScriptAnalyzer" executed="True" result="$TestResult" success="$TestSuccess" time="0.0" asserts="0">
