@@ -36,7 +36,7 @@ task Pester {
     # Fix filename in Pester NUnit XML
     $NUnitText=Get-Content $Results.Configuration.TestResult.OutputPath.Value -Encoding $Results.Configuration.TestResult.OutputEncoding.Value
     $FixedText=$NUnitText -replace 'type="TestFixture" name="Pester"',"type=""TestFixture"" name=""$(Split-Path -Leaf $Results.Configuration.TestResult.OutputPath.Value)"""
-    Out-File -FilePath $Results.Configuration.TestResult.OutputPath.Value -Encoding $Results.Configuration.TestResult.OutputEncoding.Value
+    Out-File -InputObject $FixedText -FilePath $Results.Configuration.TestResult.OutputPath.Value -Encoding $Results.Configuration.TestResult.OutputEncoding.Value
 
     # Pester 5 does not return a CodeCoverage object, so parse the Jacoco file to get similar results
     $CodeCoverageText=''
