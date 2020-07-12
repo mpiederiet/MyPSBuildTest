@@ -1,16 +1,10 @@
 # See http://www.appveyor.com/docs/appveyor-yml for many more options
-
+# Use VS2019 image
 image: Visual Studio 2019
 
-#Enable RDP access for fun :-)
-on_finish:
-  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-
-artifacts:
-  # pushing all Pester TestResult files in build directory recursively
-  - path: '**\TestResults_*.xml'
-  # pushing all ScriptAnalyzer files in build directory recursively
-  - path: '**\ScriptAnalyzer_*.xml'
+#Enable RDP access when troubleshooting
+#on_finish:
+#  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 install:
   - ps: .\module.build.ps1 -InstallDependencies -Verbose
@@ -19,10 +13,9 @@ build_script:
   - ps: .\module.build.ps1
 # Test with PS core
 #  - pwsh: .\module.build.ps1 test; exit 0
-# Upload Pester and ScriptAnalyzer output
-  - ps: Get-ChildItem '.\BuildOutput\*.xml' -Exclude 'CodeCoverage_*'|ForEach-Object {(New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", $_)}
+
+after_build:
+  # Upload Pester and ScriptAnalyzer output; leverage Add-TestResultToAppVeyor from BuildHelpers module
+  - ps: Add-TestResultToAppVeyor -TestFile (Get-ChildItem '.\BuildOutput\*.xml' -Exclude 'CodeCoverage_*')
 # Upload code coverage report to CodeCov.io
-  - ps: |
-      $env:PATH = 'C:\msys64\usr\bin;' + $env:PATH
-      Invoke-WebRequest -Uri 'https://codecov.io/bash' -OutFile codecov.sh
-      bash codecov.sh -f ""CodeCoverage*.xml""
+  - ps: Invoke-WebRequest -Uri 'https://codecov.io/bash' -OutFile codecov.sh; $env:PATH = 'C:\msys64\usr\bin;' + $env:PATH; bash codecov.sh -f ""CodeCoverage*.xml"" -A "-s"
