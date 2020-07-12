@@ -3,10 +3,7 @@
 image: Visual Studio 2019
 
 #Enable RDP access for fun :-)
-environment:
-  APPVEYOR_RDP_PASSWORD: Vsdg45Ub@6&3345
-
-init:
+on_finish:
   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 artifacts:
