@@ -1,5 +1,5 @@
 
-taskx BuildManifest @{
+task BuildManifest @{
     Inputs  = (Get-ChildItem -Path $Source -Recurse -File)
     Outputs = $ManifestPath
     Jobs    = {

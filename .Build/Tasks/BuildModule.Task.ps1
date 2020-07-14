@@ -141,7 +141,7 @@ function Move-Statement
     }
 }
 
-taskx BuildModule @{
+task BuildModule @{
     Inputs  = (Get-ChildItem -Path $Source -Recurse -Filter *.ps1)
     Outputs = $ModulePath
     Jobs    = {
