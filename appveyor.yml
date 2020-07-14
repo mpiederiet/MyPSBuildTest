@@ -2,6 +2,9 @@
 # Use VS2019 image
 image: Visual Studio 2019
 
+cache:
+  - BuildOutput\modules                 # downloaded PowerShell modules
+
 #Enable RDP access when troubleshooting using environment variables APPVEYOR_RDP_ENABLE and APPVEYOR_RDP_BLOCK
 on_finish:
   - ps: |
