@@ -9,12 +9,11 @@ task Analyze {
     "Analyzing $($Env:BHModulePath)..."
     $results = Invoke-ScriptAnalyzer @params
     if ($results) {
-        'One or more PSScriptAnalyzer errors/warnings were found.'
-        'Please investigate or add the required SuppressMessage attribute.'
         # Export NUnit file if Export-NUnitXML command is available
         if (Get-Command 'Export-NUnitXML' -ErrorAction 'SilentlyContinue') {
             Export-NUnitXml -ScriptAnalyzerResult $results -Path $Script:ScriptAnalyzerFile -TestFileName (Split-Path -Leaf $Script:ScriptAnalyzerFile)
         }
         $results | Format-Table -AutoSize
+        Throw 'One or more PSScriptAnalyzer errors/warnings were found. Please investigate or add the required SuppressMessage attribute.'
     }
 }
