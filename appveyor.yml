@@ -4,7 +4,10 @@ image: Visual Studio 2019
 
 #Enable RDP access when troubleshooting
 on_finish:
-  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+  - ps: |
+    $EnableRDP=$False;$Null=[bool]::TryParse($Env:APPVEYOR_RDP_ENABLE,[ref]$EnableRDP)
+    $BlockRDP=$False;$Null=[bool]::TryParse($Env:APPVEYOR_RDP_BLOCK,[ref]$BlockRDP)
+    if ($EnableRDP) {Invoke-Expression ((New-Object System.Net.Webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))}
 
 install:
   - ps: .\module.build.ps1 -InstallDependencies -Verbose
