@@ -142,8 +142,8 @@ function Move-Statement
 }
 
 task BuildModule @{
-    Inputs  = (Get-ChildItem -Path $Source -Recurse -Filter *.ps1)
-    Outputs = $ModulePath
+    Inputs  = {Get-ChildItem -Path $Source -Recurse -Filter *.ps1}
+    Outputs = {$ModulePath}
     Jobs    = {
         $sb = [Text.StringBuilder]::new()
         $null = $sb.AppendLine('$Script:PSModuleRoot = $PSScriptRoot')

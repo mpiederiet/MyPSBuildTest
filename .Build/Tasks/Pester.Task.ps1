@@ -28,7 +28,7 @@ task Pester {
 
     # Run Pester with -verbose if not testing the master branch
     $Verbose = @{}
-    if($env:APPVEYOR_REPO_BRANCH -and $env:APPVEYOR_REPO_BRANCH -notlike 'master') {
+    if($env:BHBranchName -and $env:BHBranchName -notlike 'master') {
         $Verbose.add("Verbose",$True)
     }
     $results = Invoke-Pester @Verbose -Configuration $PesterConfiguration
