@@ -17,7 +17,7 @@ Param (
 
     $TaskHeader = {
         param($Path)
-        $FigletTask=Convertto-FigletFont -InputObject $Task.Name.replace('_',' ').ToUpper() -Font 'Big'
+        $FigletTask=Convertto-FigletFont -InputObject $Task.Name.replace('_',' ').ToLower() -Font 'Ogre'
         $MaximumHeaderSize=($FigletTask -split "`n" | Measure-Object -Maximum length).Maximum
         ''
         '=' * $MaximumHeaderSize
@@ -40,43 +40,22 @@ Process {
             $null = $PSboundParameters.Remove('Bootstrap')
         }
 #>
-        Invoke-Build $Tasks $MyInvocation.MyCommand.Path @PSBoundParameters
+        try {
+            Invoke-Build $Tasks $MyInvocation.MyCommand.Path -Result 'Result' @PSBoundParameters
+        }
+        finally {
+            if (($null -ne $Result) -and ($null -ne $Result.Tasks)) {
+                "Build error report"
+                $Result.Tasks | Format-Table Name, Error -AutoSize
+                "Build duration report"
+                $Result.Tasks | Format-Table -AutoSize Name,@{
+                    Name = 'ScriptName'
+                    Expression = {$_.InvocationInfo.ScriptName}
+                }, Elapsed
+            }
+        }
         return
     }
-
-
-    # Download PowerFiglet PS module
-    # Check whether there is a "latest" release
-    <#
-    try {
-        $LatestRelease=invoke-webrequest 'https://api.github.com/repos/MischaBoender/PowerFIGlet/releases/latest'
-    }
-    catch [System.Net.WebException] {
-        $LatestRelease=$_.Exception.Response
-    }
-    if ($latestRelease.StatusCode -eq 404) {
-        # no non-prereleases found, try to find one from all releases and sort by tag
-        try {
-            $Releases=invoke-webrequest 'https://api.github.com/repos/MischaBoender/PowerFIGlet/releases'
-        }
-        catch [System.Net.WebException] {
-            $Releases=$_.Exception.Response
-        }
-        if ($releases.statusCode -eq 200) {
-            $LatestRelease=(($Releases.content|convertfrom-json)|Sort-Object tag_name -desc|Select-Object -first 1)
-        } Else {
-            $LatestRelease=$null
-        }
-    }
-
-    if ($null -ne $LatestRelease) {
-        # Download the module
-        $FileName=$LatestRelease.assets.name
-        Invoke-WebRequest $LatestRelease.assets.browser_download_url -OutFile $FileName
-        $TargetPath=Join-path $Env:BHBuildOutput "Modules\$($FileName -replace '\.zip$','')"
-        Expand-Archive -Path $FileName -DestinationPath $TargetPath
-    }
-    #>
 
     # Initialize Build specific variables
     $InitializeBuildFile=Join-Path "$PSScriptRoot/.Build/Tasks/" "InitializeTasks.ps1"
@@ -94,7 +73,7 @@ Process {
     if($TaskHeader) { Set-BuildHeader $TaskHeader }
 
     # Defining the Default task 'workflow' when invoked without -tasks parameter
-    task . Build, Helpify, Test, UpdateSource
+    task . InstallDependencies, SetVariables, Build, Helpify, Test, UpdateSource
     task Build Copy, Compile, BuildModule, BuildManifest, SetVersion
     task Helpify GenerateMarkdown, GenerateHelp
     task Test Build, ImportModule, Analyze, Pester
