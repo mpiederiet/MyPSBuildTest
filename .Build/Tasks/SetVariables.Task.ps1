@@ -1,34 +1,37 @@
 task SetVariables {
-    if ($null -eq (Get-ChildItem 'Env:BH*')) {
-        Write-Verbose 'Setting Build Environment variables'
-        Set-BuildEnvironment -BuildOutput $BuildOutput
-    } else {
-        Write-Verbose 'Build Environment variables already set'
-    }
-
-    $Script:Output=$Env:BHBuildOutput
     # BuildRoot is set by invoke-build
     #$Script:BuildRoot=$Env:BHProjectPath
+
     if (![io.path]::IsPathRooted($BuildOutput)) {
         $BuildOutput = Join-Path -Path $BuildRoot -ChildPath $BuildOutput
     }
 
+    if ($null -eq (Get-ChildItem 'Env:BH*') -or $Env:BHBuildOutput -ne $BuildOutput) {
+        Write-Verbose 'Setting Build Environment variables'
+        $Verbose=@{}
+        if ($VerbosePreference -eq 'Continue') {
+            $Verbose['Verbose']=$True
+        }
+        Set-BuildEnvironment -BuildOutput $BuildOutput -Force @Verbose
+    } else {
+        Write-Verbose 'Build Environment variables already set'
+    }
     $Script:Source=$Env:BHModulePath
+    $Script:Output=$Env:BHBuildOutput
     $Script:DocsPath=Join-Path $Env:BHProjectPath 'Docs'
     $Script:Destination=Join-Path $Env:BHBuildOutput $Env:BHProjectName
-    $Script:ModuleName=$Env:BHProjectName
+    $Script:ModuleName = $Env:BHProjectName
     $Script:ManifestPath=Join-Path $Script:Destination "$ModuleName.psd1"
     $Script:ModulePath=Join-Path $Script:Destination "$ModuleName.psm1"
     $Script:ModuleRoot = $Env:BHProjectPath
-    $Script:ModuleName = $Env:BHProjectName
 
     $Script:CodeCoverageThreshold=$CodeCoverageThreshold
 
     Write-Verbose "Initializing build variables" -Verbose
-    Write-Verbose "  Existing BuildRoot [$BuildRoot]" -Verbose
+    Write-Verbose "  BuildRoot [$BuildRoot]" -Verbose
     Write-Verbose "  DocsPath [$DocsPath]" -Verbose
-    Write-Verbose "  Output [$Output]" -Verbose
     Write-Verbose "  Source [$Source]" -Verbose
+    Write-Verbose "  Output [$Output]" -Verbose
     Write-Verbose "  Destination [$Destination]" -Verbose
     Write-Verbose "  ModuleName [$ModuleName]" -Verbose
     Write-Verbose "  ManifestPath [$ManifestPath]" -Verbose
