@@ -58,9 +58,9 @@ function Install-Dependencies {
     Write-Verbose "Invoking PSDepend (download dependencies)"
     $PSDependParams = @{
         Force = $true
-        Path = (Join-Path $BuildRoot '.build/module.requirements.psd1')
+        Path = (Join-Path ($Pwd.Path) '.build/module.requirements.psd1')
     }
-    if($VerbosePreference -eq 'Continue') { $PSDependParams.add('verbose',$true)}
+    if($PSBoundParameters.ContainsKey['Verbose']) { $PSDependParams.add('verbose',$PSBoundParameters['Verbose'])}
     $null=Invoke-PSDepend @PSDependParams
     # TEMP fix
     $ExportNUnitXMLPath=Split-Path -Parent ((Get-Module Export-NUnitXML -listAvailable).Path)
