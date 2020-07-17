@@ -1,4 +1,6 @@
 task Pester {
+    # Force loading the latest version of Pester because of the new PesterConfiguration
+    Import-Module Pester -MinimumVersion 5.0
     # Create new Pester configuration object
     $PesterConfiguration=[PesterConfiguration]::default
 

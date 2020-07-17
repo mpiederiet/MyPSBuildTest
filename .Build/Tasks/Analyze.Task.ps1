@@ -3,7 +3,7 @@ task Analyze {
         IncludeDefaultRules = $true
         Recurse             = $true
         Path                = $Env:BHModulePath
-        Settings            = "$ModuleRoot\.Build\ScriptAnalyzerSettings.psd1"
+        Settings            = "$($Env:BHProjectPath)\.Build\ScriptAnalyzerSettings.psd1"
     }
 
     "Analyzing $($Env:BHModulePath)..."
@@ -14,6 +14,6 @@ task Analyze {
             Export-NUnitXml -ScriptAnalyzerResult $results -Path $Script:ScriptAnalyzerFile -TestFileName (Split-Path -Leaf $Script:ScriptAnalyzerFile)
         }
         $results | Format-Table -AutoSize
-        Throw 'One or more PSScriptAnalyzer errors/warnings were found. Please investigate or add the required SuppressMessage attribute.'
+        Write-Error 'One or more PSScriptAnalyzer errors/warnings were found. Please investigate or add the required SuppressMessage attribute.'
     }
 }
