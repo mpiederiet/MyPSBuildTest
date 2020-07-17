@@ -73,6 +73,9 @@ if ($InstallDependencies) {
     if($PSBoundParameters.ContainsKey['Verbose']) { $Params.add('verbose',$PSBoundParameters['Verbose'])}
     Install-Dependencies @Params    
     Write-Verbose "Dependency installation done"
+    if (Get-ChildItem "Env:APPVEYOR*") {
+        $Env:APPVEYOR_SAVE_CACHE_ON_ERROR='true'
+    }
     # Exit the script
     Exit 0
 }
@@ -95,6 +98,10 @@ if ($MyInvocation.ScriptName -notlike '*Invoke-Build.ps1') {
                 Expression = {$_.InvocationInfo.ScriptName}
             }, Elapsed
         }
+        $EnableRDP=$False;$Null=[bool]::TryParse($Env:APPVEYOR_RDP_ENABLE,[ref]$EnableRDP)
+        $BlockRDP=$False;$Null=[bool]::TryParse($Env:APPVEYOR_RDP_BLOCK,[ref]$BlockRDP)
+        if ($EnableRDP) {Invoke-Expression ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))}
+  
         if (-not $BuildSuccess) {
             Throw 'Build FAILED'
         }
