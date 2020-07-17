@@ -4,7 +4,10 @@ Param (
     $Tasks,
 
     [String]
-    $BuildOutput = "BuildOutput",
+    $BuildOutput = 'BuildOutput',
+
+    [switch]
+    $InstallDependencies,
 
     [String[]]
     $GalleryRepository,
@@ -15,6 +18,65 @@ Param (
     $CodeCoverageThreshold = 80
 )
 Write-Debug "$($MyInvocation.ScriptName): $($PSBoundParameters | out-string)"
+function Install-Dependencies {
+    [CmdletBinding()]
+    param()
+
+    if (!(Get-PackageProvider -Name NuGet -ForceBootstrap)) {
+        $providerBootstrapParams = @{
+            Name = 'nuget'
+            force = $true
+            ForceBootstrap = $true
+        }
+        if($VerbosePreference -eq 'Continue') { $providerBootstrapParams.add('verbose',$true)}
+        if ($GalleryProxy) { $providerBootstrapParams.Add('Proxy',$GalleryProxy) }
+        Write-Verbose "Installing NuGet Provider"
+        $null = Install-PackageProvider @providerBootstrapParams
+        Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+    }
+
+    if (!(Get-Module -Listavailable PSDepend)) {
+        Write-Verbose "BootStrapping PSDepend"
+        Write-Verbose "Parameter $BuildOutput"
+        $InstallPSDependParams = @{
+            Name = 'PSDepend'
+            AllowClobber = $true
+            Confirm = $false
+            Force = $true
+            Scope = 'CurrentUser'
+        }
+        if($VerbosePreference -eq 'Continue') { $InstallPSDependParams.add('verbose',$true)}
+        if ($GalleryRepository) { $InstallPSDependParams.Add('Repository',$GalleryRepository) }
+        if ($GalleryProxy)      { $InstallPSDependParams.Add('Proxy',$GalleryProxy) }
+        if ($GalleryCredential) { $InstallPSDependParams.Add('ProxyCredential',$GalleryCredential) }
+        Install-Module @InstallPSDependParams
+        # TEMP fix
+        $PSDependPath=Split-Path -Parent ((Get-Module PSDepend -listAvailable).Path)
+        Copy-Item .\.Build\Github.ps1 (Join-Path $PSDependPath 'PSDependScripts') -Force
+    }
+
+    Write-Verbose "Invoking PSDepend (download dependencies)"
+    $PSDependParams = @{
+        Force = $true
+        Path = (Join-Path $BuildRoot '.build/module.requirements.psd1')
+    }
+    if($VerbosePreference -eq 'Continue') { $PSDependParams.add('verbose',$true)}
+    $null=Invoke-PSDepend @PSDependParams
+    # TEMP fix
+    $ExportNUnitXMLPath=Split-Path -Parent ((Get-Module Export-NUnitXML -listAvailable).Path)
+    Copy-Item .\.Build\Export-NUnitXML.psm1 $ExportNUnitXMLPath -Force
+}
+
+if ($InstallDependencies) {
+    Write-Information "Installing dependencies... [this can take a moment]"
+    $Params = @{}
+    if($PSBoundParameters.ContainsKey['Verbose']) { $Params.add('verbose',$PSBoundParameters['Verbose'])}
+    Install-Dependencies @Params    
+    Write-Verbose "Dependency installation done"
+    # Exit the script
+    Exit 0
+}
+
 if ($MyInvocation.ScriptName -notlike '*Invoke-Build.ps1') {
     try {
         # @PSBoundParameters
@@ -37,8 +99,7 @@ if ($MyInvocation.ScriptName -notlike '*Invoke-Build.ps1') {
             Throw 'Build FAILED'
         }
     }
-    return
-    
+    return    
 }
 
 
@@ -58,9 +119,10 @@ Get-ChildItem -Path "$PSScriptRoot/.Build/Tasks/" -Recurse -Include *.Task.ps1 -
 
 # Defining the Default task 'workflow' when invoked without -tasks parameter
 task . Init, Build, Helpify, Test
-task Init SetBuildHeader, InstallDependencies, SetVariables
+task Init SetBuildHeader, ImportDependencies, SetVariables
 task Build Copy, Compile, BuildModule, BuildManifest, SetVersion
 task Helpify GenerateMarkdown, GenerateHelp
+# Don't fail build if Test Results publishing fails
 task Test Build, ImportModule, Analyze, Pester, "?PublishTestResults"
 
 task TFS CleanModule, Build, PublishVersion, Helpify, Test
