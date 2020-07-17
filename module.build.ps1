@@ -98,10 +98,7 @@ if ($MyInvocation.ScriptName -notlike '*Invoke-Build.ps1') {
                 Expression = {$_.InvocationInfo.ScriptName}
             }, Elapsed
         }
-        $EnableRDP=$False;$Null=[bool]::TryParse($Env:APPVEYOR_RDP_ENABLE,[ref]$EnableRDP)
-        $BlockRDP=$False;$Null=[bool]::TryParse($Env:APPVEYOR_RDP_BLOCK,[ref]$BlockRDP)
-        if ($EnableRDP) {Invoke-Expression ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))}
-  
+        Get-ChildItem Env:APPVEYOR*
         if (-not $BuildSuccess) {
             Throw 'Build FAILED'
         }
