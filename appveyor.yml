@@ -6,7 +6,8 @@ cache:
   - BuildOutput\modules                 # downloaded PowerShell modules
 
 #Enable RDP access when troubleshooting using environment variables APPVEYOR_RDP_ENABLE and APPVEYOR_RDP_BLOCK
-on_finish:
+#on_finish:
+after_build:
   - ps: |
       $EnableRDP=$False;$Null=[bool]::TryParse($Env:APPVEYOR_RDP_ENABLE,[ref]$EnableRDP)
       $BlockRDP=$False;$Null=[bool]::TryParse($Env:APPVEYOR_RDP_BLOCK,[ref]$BlockRDP)
