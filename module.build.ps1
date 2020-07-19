@@ -98,7 +98,6 @@ if ($MyInvocation.ScriptName -notlike '*Invoke-Build.ps1') {
                 Expression = {$_.InvocationInfo.ScriptName}
             }, Elapsed
         }
-        Get-ChildItem "Env:APPVEYOR*" | Out-String
         if (-not $BuildSuccess) {
             Throw 'Build FAILED'
         }

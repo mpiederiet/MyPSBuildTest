@@ -3,7 +3,7 @@ task Compile @{
     Inputs = {
         Get-ChildItem $BuildRoot -Recurse -File -Include *.cs
     }
-    Outputs = "$Destination\bin\$ModuleName.dll"
+    Outputs = {"$Destination\bin\$ModuleName.dll"}
     Jobs = {
         # This build command requires .Net Core
         "Building Module"
