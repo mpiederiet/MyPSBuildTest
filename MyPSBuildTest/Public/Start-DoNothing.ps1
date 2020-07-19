@@ -4,6 +4,8 @@ function Start-DoNothing {
     if ($null -eq (Get-Process|Sort-Object|Out-null)) {
         # Do nothing
         #$Script:Something='nothing'
-        Start-Sleep -Milliseconds 1
+        if($PSCmdlet.ShouldProcess('No process') {
+            Start-Sleep -Milliseconds 1
+        }
     }
 }
