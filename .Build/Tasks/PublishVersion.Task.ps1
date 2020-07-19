@@ -25,4 +25,5 @@ task PublishVersion {
     
             Write-Warning "Unknown build system [$_]. Version number not updated."
         }
+    }
 }
