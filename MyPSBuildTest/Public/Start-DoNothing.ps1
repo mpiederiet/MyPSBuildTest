@@ -1,6 +1,9 @@
 function Start-DoNothing {
-if ((Get-Process|sort|Out-null) -eq $null) {
-    # Do nothing
-    $Global:Something='nothing'
-   }
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+    if ($null -eq (Get-Process|Sort-Object|Out-null)) {
+        # Do nothing
+        #$Script:Something='nothing'
+        Start-Sleep -Milliseconds 1
+    }
 }
