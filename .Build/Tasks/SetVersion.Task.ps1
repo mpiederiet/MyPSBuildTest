@@ -38,11 +38,9 @@ task SetVersion {
     $null = New-Item -ItemType Directory -Path $downloadFolder -Force -ErrorAction Ignore
 
     $versionFile = Join-Path $downloadFolder versionfile
-    if(Test-Path $versionFile)
-    {
+    if(Test-Path $versionFile) {
         $versionFileData = Get-Content $versionFile -raw
-        if($versionFileData -eq $versionStamp)
-        {
+        if($versionFileData -eq $versionStamp) {
             continue
         }
     }
@@ -50,10 +48,9 @@ task SetVersion {
     "Checking for published version"
     $publishedModule = Find-Module -Name $ModuleName -ErrorAction 'Ignore' |
         Sort-Object -Property {[version]$_.Version} -Descending |
-        Select -First 1
+        Select-Object -First 1
 
-    if($null -ne $publishedModule)
-    {
+    if($null -ne $publishedModule) {
         [version] $publishedVersion = $publishedModule.Version
         "  Published version [$publishedVersion]"
 
@@ -65,25 +62,19 @@ task SetVersion {
         [System.Collections.Generic.HashSet[string]] $publishedInterface = @(GetModulePublicInterfaceMap -Path (Join-Path $downloadFolder $ModuleName))
         [System.Collections.Generic.HashSet[string]] $buildInterface = @(GetModulePublicInterfaceMap -Path $ManifestPath)
 
-        if (-not $publishedInterface.IsSubsetOf($buildInterface))
-        {
+        if (-not $publishedInterface.IsSubsetOf($buildInterface)) {
             $bumpVersionType = 'Major'
         }
-        elseif ($publishedInterface.count -ne $buildInterface.count)
-        {
+        elseif ($publishedInterface.count -ne $buildInterface.count) {
             $bumpVersionType = 'Minor'
         }
     }
 
-    if ($version -lt ([version] '1.0.0'))
-    {
+    if ($version -lt ([version] '1.0.0')) {
         "Module is still in beta; don't bump major version."
-        if ($bumpVersionType -eq 'Major')
-        {
+        if ($bumpVersionType -eq 'Major') {
             $bumpVersionType = 'Minor'
-        }
-        else
-        {
+        } else {
             $bumpVersionType = 'Patch'
         }
     }
@@ -92,20 +83,14 @@ task SetVersion {
     $version = [version] (Step-Version -Version $version -Type $bumpVersionType)
 
     "  Comparing to source version [$sourceVersion]"
-    if($sourceVersion -gt $version)
-    {
+    if($sourceVersion -gt $version) {
         "    Using existing version"
         $version = $sourceVersion
     }
 
-    if ( -not [string]::IsNullOrEmpty( $env:Build_BuildID ) )
-    {
+    # BuildHelpers should identify the build number correctly from different build systems
+    if ( -not [string]::IsNullOrEmpty( $env:BHBuildNumber) ) {
         $build = $env:Build_BuildID
-        $version = [version]::new($version.Major, $version.Minor, $version.Build, $build)
-    }
-    elseif ( -not [string]::IsNullOrEmpty( $env:APPVEYOR_BUILD_ID ) )
-    {
-        $build = $env:APPVEYOR_BUILD_ID
         $version = [version]::new($version.Major, $version.Minor, $version.Build, $build)
     }
 
@@ -118,8 +103,7 @@ task SetVersion {
 
     Set-Content -Path $versionFile -Value $versionStamp -NoNewline -Encoding UTF8
 
-    if(Test-Path $BuildRoot\fingerprint)
-    {
+    if(Test-Path $BuildRoot\fingerprint) {
         Remove-Item $BuildRoot\fingerprint
     }
 }
