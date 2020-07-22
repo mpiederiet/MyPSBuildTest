@@ -125,12 +125,14 @@ task . Init, Build, Helpify, Test
 task Init SetBuildHeader, ImportDependencies, SetVariables
 task Build Copy, Compile, BuildModule, BuildManifest, SetVersion
 task Helpify GenerateMarkdown, GenerateHelp
+task PublishResults "?PublishTestResults","?PublishCodeCoverage"
 # Don't fail build if Test Results publishing fails
-task Test Build, ImportModule, Analyze, Pester, "?PublishTestResults", FailBuildOnPesterFail
+task Test Build, ImportModule, Analyze, Pester, PublishResults, FailBuildOnPesterFail, FailBuildOnCodeCovFail
 
 task TFS CleanModule, Build, PublishVersion, Helpify, Test
 task Publish TFS, PublishModule
-task DevTest SetVariables, ImportDevModule, "?Analyze", Pester, FailBuildOnPesterFail
+# Only show code coverage, don't fail in DevTest
+task DevTest SetVariables, ImportDevModule, "?Analyze", PesterDev, "?FailBuildOnCodeCovFail", FailBuildOnPesterFail
 
 # Define a dummy task when you don't want any task executed (e.g. Only load PSModulePath)
 task Noop {}
