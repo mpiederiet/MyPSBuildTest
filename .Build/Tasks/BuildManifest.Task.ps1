@@ -9,10 +9,10 @@ task BuildManifest @{
         $content = Get-Content -Path "$Source\$ModuleName.psd1" -Raw -Encoding UTF8
         $content.Trim() | Set-Content -Path "$Source\$ModuleName.psd1" -Encoding UTF8
         #>
-    
 
+        # Pester Tests are in a separate folder ("tests"), but for safety they will be excluded here
         $functions = Get-ChildItem -Path "$ModuleName\Public\*.ps1" -ErrorAction 'Ignore' |
-            Where-Object 'Name' -notmatch 'Tests'
+            Where-Object 'Name' -notlike '*.Tests.*'
 
         if ($functions) {
             'Setting FunctionsToExport...'

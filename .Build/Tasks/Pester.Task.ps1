@@ -6,8 +6,10 @@ Function Invoke-PesterFromTask ([switch]$IsDev) {
 
     if ($IsDev){
         $CodeCoverageFiles=[string[]](Get-ChildItem -Recurse -Path $Script:Source -Include '*.ps1','*.psm1'|Select-Object -Expand FullName)
+        $Tag='Dev'
     } Else {
         $CodeCoverageFiles=[string[]](Get-ChildItem -Recurse -Path $Script:Destination -Include '*.ps1','*.psm1'|Select-Object -Expand FullName)
+        $Tag='Build'
     }
     $PesterConfiguration = [PesterConfiguration]@{
         Run = @{
@@ -21,7 +23,7 @@ Function Invoke-PesterFromTask ([switch]$IsDev) {
             TestSuiteName = (Split-Path -Leaf $PesterTestFile)
         }
         Filter = @{
-            Tag = 'Build'
+            Tag = $Tag
         }
         Should = @{
             ErrorAction = 'Continue'
@@ -35,7 +37,8 @@ Function Invoke-PesterFromTask ([switch]$IsDev) {
 
     # Run Pester with -verbose if not testing the master branch
     $Verbose = @{}
-    if($env:BHBranchName -and $env:BHBranchName -notlike 'master') {
+
+    if($env:BHBranchName -and $env:BHBranchName -notlike 'master' -or $VerbosePreference -eq 'Continue') {
         $Verbose.add("Verbose",$True)
     }
     $Script:PesterResults = Invoke-Pester @Verbose -Configuration $PesterConfiguration

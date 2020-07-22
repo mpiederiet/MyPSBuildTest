@@ -7,8 +7,7 @@ Write-Verbose 'Import Classes in order because of dependencies'
 $classList = @(
 )
 
-foreach($class in $classList)
-{
+foreach($class in $classList) {
     Write-Verbose " Class: $class"
     . "$psscriptroot\classes\$class.ps1"
 }

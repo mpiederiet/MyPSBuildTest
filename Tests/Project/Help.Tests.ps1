@@ -1,7 +1,7 @@
 $Script:ModuleRoot = $Env:BHProjectPath
 $Script:ModuleName = $Env:BHProjectName
 
-Describe "Public commands have comment-based or external help" -Tags 'Build' {
+Describe "Public commands have comment-based or external help" -Tag 'Build','Dev' {
     $functions = Get-Command -Module $ModuleName
     $help = foreach ($function in $functions) {
         Get-Help -Name $function.Name

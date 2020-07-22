@@ -3,7 +3,7 @@ $Script:ModuleName = $Env:BHProjectName
 
 $Script:SourceRoot = Join-Path -Path $ModuleRoot -ChildPath $ModuleName
 
-Describe "Public commands have Pester tests" -Tag 'Build' {
+Describe "Public commands have Pester tests" -Tag 'Build','Dev' {
     $commands = Get-Command -Module $ModuleName
 
     foreach ($command in $commands.Name)

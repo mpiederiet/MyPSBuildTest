@@ -1,10 +1,9 @@
-Describe "Function: Start-DoNothing" -Tag Build {
+Describe "Function: Start-DoNothing" -Tag 'Build','Dev' {
     It "Does not throw" {
         {Start-DoNothing} | Should -Not -Throw
     }
 
     It "Executes a script and gives results" {
-        Start-DoNothing
-        $Global:Something | Should -Be 'nothing'
+        Start-DoNothing | Should -Be 'nothing'
     }
 }
