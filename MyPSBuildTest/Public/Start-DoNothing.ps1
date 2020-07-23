@@ -1,3 +1,4 @@
+function Start-DoNothing {
 <#
 .SYNOPSIS
 Do nothing
@@ -11,7 +12,6 @@ Start-DoNothing
 .NOTES
 Don't expect this to do anything
 #>
-function Start-DoNothing {
     [CmdletBinding(SupportsShouldProcess)]
     param()
     if ($null -eq (Get-Process|Sort-Object|Out-null)) {

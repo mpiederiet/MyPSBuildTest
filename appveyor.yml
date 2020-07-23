@@ -1,17 +1,12 @@
 # See http://www.appveyor.com/docs/appveyor-yml for many more options
+version: '{build}'
+
 # Use VS2019 image
 image: Visual Studio 2019
 
+# Use the build cache
 cache:
-  - BuildOutput\modules                 # downloaded PowerShell modules
-
-#Enable RDP access when troubleshooting using environment variables APPVEYOR_RDP_ENABLE and APPVEYOR_RDP_BLOCK
-on_finish:
-#after_build:
-  - ps: |
-      $EnableRDP=$False;$Null=[bool]::TryParse($Env:APPVEYOR_RDP_ENABLE,[ref]$EnableRDP)
-      $BlockRDP=$False;$Null=[bool]::TryParse($Env:APPVEYOR_RDP_BLOCK,[ref]$BlockRDP)
-      if ($EnableRDP) {Invoke-Expression ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))}
+  - BuildOutput\modules        # downloaded PowerShell modules
 
 install:
   - ps: .\module.build.ps1 -InstallDependencies
@@ -20,3 +15,13 @@ build_script:
   - ps: .\module.build.ps1
 # Test with PS core
 #  - pwsh: .\module.build.ps1 test; exit 0
+
+# Disable Appveyor testscripts, this is covered by the Invoke-Build pipeline
+test: off
+
+#Enable RDP access when troubleshooting using environment variables APPVEYOR_RDP_ENABLE and APPVEYOR_RDP_BLOCK
+on_finish:
+  - ps: |
+      $EnableRDP=$False;$Null=[bool]::TryParse($Env:APPVEYOR_RDP_ENABLE,[ref]$EnableRDP)
+      $BlockRDP=$False;$Null=[bool]::TryParse($Env:APPVEYOR_RDP_BLOCK,[ref]$BlockRDP)
+      if ($EnableRDP) {Invoke-Expression ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))}

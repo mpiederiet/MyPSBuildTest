@@ -129,7 +129,7 @@ task PublishResults "?PublishTestResults","?PublishCodeCoverage"
 # Don't fail build if Test Results publishing fails
 task Test Build, ImportModule, Analyze, Pester, PublishResults, FailBuildOnPesterFail, FailBuildOnCodeCovFail
 
-task TFS CleanModule, Build, PublishVersion, Helpify, Test
+task TFS Clean, Build, PublishVersion, Helpify, Test
 task Publish TFS, PublishModule
 # Only show code coverage, don't fail in DevTest
 task DevTest SetVariables, ImportDevModule, "?Analyze", PesterDev, "?FailBuildOnCodeCovFail", FailBuildOnPesterFail

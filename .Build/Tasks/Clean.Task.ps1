@@ -1,11 +1,11 @@
 task Clean {
-    if (Test-Path $Output) {
-        "Cleaning Output files in [$Output]..."
-        $null = Get-ChildItem -Path $Output -File -Recurse |
+    if (Test-Path $Destination) {
+        "Cleaning Output files in [$Destination]..."
+        $null = Get-ChildItem -Path $Destination -File -Recurse |
             Remove-Item -Force -ErrorAction 'Ignore'
 
-        "Cleaning Output directories in [$Output]..."
-        $null = Get-ChildItem -Path $Output -Directory -Recurse |
+        "Cleaning Output directories in [$Destination]..."
+        $null = Get-ChildItem -Path $Destination -Directory -Recurse |
             Remove-Item -Recurse -Force -ErrorAction 'Ignore'
     }
 }
