@@ -121,18 +121,19 @@ Get-ChildItem -Path "$PSScriptRoot/.Build/Tasks/" -Recurse -Include *.Task.ps1 -
 }
 
 # Defining the Default task 'workflow' when invoked without -tasks parameter
-task . Init, Build, Helpify, Test
+task . Init, Helpify, Test
 task Init SetBuildHeader, ImportDependencies, SetVariables
 task Build Copy, Compile, BuildModule, BuildManifest, SetVersion
 task Helpify GenerateMarkdown, GenerateHelp
-task PublishResults "?PublishTestResults","?PublishCodeCoverage"
 # Don't fail build if Test Results publishing fails
-task Test Build, ImportModule, Analyze, Pester, PublishResults, FailBuildOnPesterFail, FailBuildOnCodeCovFail
+task PublishResults "?PublishTestResults","?PublishCodeCoverage"
+task Test ImportModule, Analyze, Pester, PublishResults, FailBuildOnPesterFail, FailBuildOnCodeCovFail
+task TestBeforePublish ImportBuiltModule, Analyze, PesterBuiltModule, FailBuildOnPesterFail, FailBuildOnCodeCovFail
 
-task TFS Clean, Build, PublishVersion, Helpify, Test
+task TFS Init, Clean, Build, PublishVersion, Helpify, TestBeforePublish
 task Publish TFS, PublishModule
 # Only show code coverage, don't fail in DevTest
-task DevTest SetVariables, ImportDevModule, "?Analyze", PesterDev, "?FailBuildOnCodeCovFail", FailBuildOnPesterFail
+task DevTest SetVariables, ImportModule, "?Analyze", Pester, "?FailBuildOnCodeCovFail", FailBuildOnPesterFail
 
 # Define a dummy task when you don't want any task executed (e.g. Only load PSModulePath)
 task Noop {}

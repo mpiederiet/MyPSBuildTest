@@ -1,14 +1,14 @@
-Function Invoke-PesterFromTask ([switch]$IsDev) {
+Function Invoke-PesterFromTask ([switch]$Built) {
     # Force loading the latest version of Pester because of the new PesterConfiguration
     Import-Module Pester -MinimumVersion 5.0
     # Create new Pester configuration object
     $PesterConfiguration=[PesterConfiguration]::default
 
-    if ($IsDev){
-        $CodeCoverageFiles=[string[]](Get-ChildItem -Recurse -Path $Script:Source -Include '*.ps1','*.psm1'|Select-Object -Expand FullName)
-        $Tag='Dev'
-    } Else {
+    if ($Built){
         $CodeCoverageFiles=[string[]](Get-ChildItem -Recurse -Path $Script:Destination -Include '*.ps1','*.psm1'|Select-Object -Expand FullName)
+        $Tag='BeforePublish'
+    } Else {
+        $CodeCoverageFiles=[string[]](Get-ChildItem -Recurse -Path $Script:Source -Include '*.ps1','*.psm1'|Select-Object -Expand FullName)
         $Tag='Build'
     }
     $PesterConfiguration = [PesterConfiguration]@{
@@ -57,6 +57,6 @@ task Pester {
     Invoke-PesterFromTask
 }
 
-task PesterDev {
-    Invoke-PesterFromTask -IsDev
+task PesterBuiltModule {
+    Invoke-PesterFromTask -Built
 }
