@@ -8,6 +8,7 @@ What can I say, it just does nothing
 
 .EXAMPLE
 Start-DoNothing
+# Displays 'nothing'
 
 .NOTES
 Don't expect this to do anything
