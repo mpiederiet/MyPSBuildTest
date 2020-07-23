@@ -121,7 +121,7 @@ Get-ChildItem -Path "$PSScriptRoot/.Build/Tasks/" -Recurse -Include *.Task.ps1 -
 }
 
 # Defining the Default task 'workflow' when invoked without -tasks parameter
-task . Init, Helpify, Test
+task . Init, Test
 task Init SetBuildHeader, ImportDependencies, SetVariables
 task Build Copy, Compile, BuildModule, BuildManifest, SetVersion
 task Helpify GenerateMarkdown, GenerateHelp
