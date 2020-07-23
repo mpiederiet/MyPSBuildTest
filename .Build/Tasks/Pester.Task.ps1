@@ -33,6 +33,9 @@ Function Invoke-PesterFromTask ([switch]$IsDev) {
             OutputPath=($Script:CodeCoverageFile)
             Path=$CodeCoverageFiles
         }
+        Output = @{
+            Verbosity='Detailed'
+        }
     }
 
     # Run Pester with -verbose if not testing the master branch

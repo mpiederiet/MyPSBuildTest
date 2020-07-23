@@ -9,14 +9,17 @@ Describe "Public commands have comment-based or external help" -Tag 'Build','Dev
 
     foreach ($script:node in $help)
     {
-        Context ($node.Name) {
-            It "Should have a Description or Synopsis" {
-                ($node.Description + $node.Synopsis) | Should -Not -BeNullOrEmpty
-                ($node.Description + $node.Synopsis).Trim() | Should -Not -Be ($node.Name)
+        Context ("$($node.category) $($node.Name)") {
+            It "Should have a Description and Synopsis" {
+                $Node.Description |  Should -Not -BeNullOrEmpty
+                $Node.Synopsis |  Should -Not -BeNullOrEmpty
             }
 
             It "Should have an Example"  {
                 $node.Examples | Should -Not -BeNullOrEmpty
+            }
+
+            It "Should have its name in the Example" {
                 $node.Examples | Out-String | Should -Match ($node.Name)
             }
 

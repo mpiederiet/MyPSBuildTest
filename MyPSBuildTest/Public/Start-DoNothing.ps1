@@ -1,3 +1,16 @@
+<#
+.SYNOPSIS
+Do nothing
+
+.DESCRIPTION
+What can I say, it just does nothing
+
+.EXAMPLE
+Start-DoNothing
+
+.NOTES
+Don't expect this to do anything
+#>
 function Start-DoNothing {
     [CmdletBinding(SupportsShouldProcess)]
     param()

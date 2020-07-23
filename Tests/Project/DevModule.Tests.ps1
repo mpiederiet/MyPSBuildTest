@@ -8,6 +8,6 @@ Describe "Module import" -Tag 'Dev' {
         {Import-Module "$Source\$ModuleName.psd1" -Force} | Should -Not -Throw
     }
     It "Should generate a module object" {
-        {Import-Module "$Source\$ModuleName.psd1" -Force -PassThru}| Should -Not -BeNullOrEmpty
+        {{Import-Module "$Source\$ModuleName.psd1" -Force -PassThru} -is [System.Management.Automation.PSModuleInfo]} | Should -Be $True
     }
 }
