@@ -7,12 +7,12 @@ task FailBuildOnCodeCovFail {
             $CodeCoverageResult=$CodeCoverageReport.SelectSingleNode('/report/counter[@type=''INSTRUCTION'']')
             $codeCoverage = [int64]($CodeCoverageResult.Covered) / ([int64]($CodeCoverageResult.Missed)+[int64]($CodeCoverageResult.Covered))
             if($codeCoverage -lt ($Script:CodeCoverageThreshold/100)) {
-                Throw ("Failed Code Coverage [{0:P}]. Threshold is {1:P}" -f $codeCoverage,($Script:CodeCoverageThreshold/100))
+                Throw ("Failed Code Coverage (instructions) [{0:P}]. Threshold is {1:P}" -f $codeCoverage,($Script:CodeCoverageThreshold/100))
             } Else {
-                Write-Build Green ("Code coverage percentage succeeded [{0:P}]. Threshold is {1:P}" -f $codeCoverage,($Script:CodeCoverageThreshold/100))
+                Write-Build Green ("Code coverage percentage (instructions) succeeded [{0:P}]. Threshold is {1:P}" -f $codeCoverage,($Script:CodeCoverageThreshold/100))
             }
         }
     } ElseIf ($Script:CodeCoverageThreshold -gt 0) {
-        Throw ("Code coverage threshold was given ({0:P}) but Pester did not return CoveCoverage output" -f ($Script:CodeCoverageThreshold/100))
+        Throw ("Code coverage threshold was given ({0:P}) but Pester did not return CodeCoverage output" -f ($Script:CodeCoverageThreshold/100))
     }
 }

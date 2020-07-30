@@ -21,5 +21,6 @@ Don't expect this to do anything
             Start-Sleep -Milliseconds 1
         }
     }
+    $Global:TestVar='Never used'
     Return 'nothing'
 }
