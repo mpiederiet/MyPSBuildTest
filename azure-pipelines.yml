@@ -13,7 +13,7 @@ steps:
 - powershell: |
     & "$($Env:BUILD_SOURCESDIRECTORY)\module.build.ps1" -InstallDependencies -Verbose
     & "$($Env:BUILD_SOURCESDIRECTORY)\module.build.ps1"
-  displayName: Install and run
+  displayName: Init and run build
 
 - task: PublishTestResults@2
   inputs:
@@ -21,8 +21,11 @@ steps:
     testResultsFiles: |
       BuildOutput/ScriptAnalyzer*.xml
       BuildOutput/TestResults*.xml
+    testRunTitle: 'PSScriptAnalyzer and Pester'
+    condition: succeededOrFailed()
 - task: PublishCodeCoverageResults@1
   inputs:
     codeCoverageTool: 'JaCoCo'
     summaryFileLocation: '$(System.DefaultWorkingDirectory)/BuildOutput/CodeCoverage*.xml'
     pathToSources: '$(System.DefaultWorkingDirectory)'
+    condition: succeededOrFailed()
