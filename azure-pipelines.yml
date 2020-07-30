@@ -25,3 +25,4 @@ steps:
   inputs:
     codeCoverageTool: 'JaCoCo'
     summaryFileLocation: '$(System.DefaultWorkingDirectory)/BuildOutput/CodeCoverage*.xml'
+    pathToSources: '$(System.DefaultWorkingDirectory)'
