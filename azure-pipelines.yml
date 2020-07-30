@@ -9,19 +9,8 @@ trigger:
 pool:
   vmImage: 'windows-latest'
 
-
-stages:
-- stage: Init
-  jobs:
-  - job: InitJob
-    steps:
-    - powershell: |
-        & "$($Env:BUILD_SOURCESDIRECTORY)\module.build.ps1" -InstallDependencies -Verbose
-    displayName: BOOTSTRAP - Install Dependencies
-- stage: Build
-  jobs:
-  - job: BuildJob
-    steps:
-    - powershell: |
-        & "$($Env:BUILD_SOURCESDIRECTORY)\module.build.ps1"
-    displayName: Build pipeline
+steps:
+- powershell: |
+    & "$($Env:BUILD_SOURCESDIRECTORY)\module.build.ps1" -InstallDependencies -Verbose
+    & "$($Env:BUILD_SOURCESDIRECTORY)\module.build.ps1"
+  displayName: Install and run
