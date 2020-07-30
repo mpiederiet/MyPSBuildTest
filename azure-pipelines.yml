@@ -14,3 +14,14 @@ steps:
     & "$($Env:BUILD_SOURCESDIRECTORY)\module.build.ps1" -InstallDependencies -Verbose
     & "$($Env:BUILD_SOURCESDIRECTORY)\module.build.ps1"
   displayName: Install and run
+
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'NUnit'
+    testResultsFiles: |
+      BuildOutput/ScriptAnalyzer*.xml
+      BuildOutput/TestResults*.xml
+- task: PublishCodeCoverageResults@1
+  inputs:
+    codeCoverageTool: 'JaCoCo'
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/BuildOutput/CodeCoverage*.xml'
