@@ -9,13 +9,19 @@ trigger:
 pool:
   vmImage: 'windows-latest'
 
-steps:
-- task: PowerShell@2
-  inputs:
-    filePath: '.\module.build.ps1'
-    arguments: '-InstallDependencies -Verbose'
-    script: .\module.build.ps1 -InstallDependencies
-- task: PowerShell@2
-  inputs:
-    filePath: '.\module.build.ps1'
-    script: .\module.build.ps1
+
+stages:
+- stage: Init
+  jobs:
+  - job: InitJob
+    steps:
+    - powershell: |
+        & "$($Env:BUILD_SOURCESDIRECTORY)\module.build.ps1" -InstallDependencies -Verbose
+    displayName: BOOTSTRAP - Install Dependencies
+- stage: Build
+  jobs:
+  - job: BuildJob
+    steps:
+    - powershell: |
+        & "$($Env:BUILD_SOURCESDIRECTORY)\module.build.ps1"
+    displayName: Build pipeline
