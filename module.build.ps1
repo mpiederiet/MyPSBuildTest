@@ -127,7 +127,7 @@ task Build Copy, Compile, BuildModule, BuildManifest, SetVersion
 task Helpify GenerateMarkdown, GenerateHelp
 # Don't fail build if Test Results publishing fails
 task PublishResults "?PublishTestResults","?PublishCodeCoverage"
-task Test ImportModule, Analyze, Pester, PublishResults, FailBuildOnPesterFail, FailBuildOnCodeCovFail
+task Test ImportModule, Analyze, Pester, PublishResults, FailBuildOnPSSAFail, FailBuildOnPesterFail, FailBuildOnCodeCovFail
 task TestBeforePublish ImportBuiltModule, Analyze, PesterBuiltModule, FailBuildOnPesterFail, FailBuildOnCodeCovFail
 
 task TFS Init, Clean, Build, PublishVersion, Helpify, TestBeforePublish
