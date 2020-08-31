@@ -18,7 +18,7 @@ jobs:
       & "$($Env:BUILD_SOURCESDIRECTORY)\module.build.ps1"
     displayName: Init and run build
 - job: 2
-  displayname: Publish results
+  displayName: Publish results
   condition: succeededOrFailed()
   steps:
   - task: PublishTestResults@2
