@@ -10,14 +10,14 @@ pool:
   vmImage: 'windows-latest'
 
 jobs:
-- job: 1
+- job: InitAndBuild
   displayName: Init and run build
   steps:
   - powershell: |
       & "$($Env:BUILD_SOURCESDIRECTORY)\module.build.ps1" -InstallDependencies -Verbose
       & "$($Env:BUILD_SOURCESDIRECTORY)\module.build.ps1"
     displayName: Init and run build
-- job: 2
+- job: PublishResults
   displayName: Publish results
   condition: succeededOrFailed()
   steps:
