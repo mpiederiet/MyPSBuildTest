@@ -9,24 +9,27 @@ trigger:
 pool:
   vmImage: 'windows-latest'
 
-steps:
-- powershell: |
-    & "$($Env:BUILD_SOURCESDIRECTORY)\module.build.ps1" -InstallDependencies -Verbose
-    & "$($Env:BUILD_SOURCESDIRECTORY)\module.build.ps1"
+jobs:
+- job: 1
   displayName: Init and run build
-  errorActionPreference: continue  
-
-- task: PublishTestResults@2
-  inputs:
-    testResultsFormat: 'NUnit'
-    testResultsFiles: |
-      BuildOutput/ScriptAnalyzer*.xml
-      BuildOutput/TestResults*.xml
-    testRunTitle: 'PSScriptAnalyzer and Pester'
-    condition: succeededOrFailed()
-- task: PublishCodeCoverageResults@1
-  inputs:
-    codeCoverageTool: 'JaCoCo'
-    summaryFileLocation: '$(System.DefaultWorkingDirectory)/BuildOutput/CodeCoverage*.xml'
-    pathToSources: '$(System.DefaultWorkingDirectory)'
-    condition: succeededOrFailed()
+  steps:
+  - powershell: |
+      & "$($Env:BUILD_SOURCESDIRECTORY)\module.build.ps1" -InstallDependencies -Verbose
+      & "$($Env:BUILD_SOURCESDIRECTORY)\module.build.ps1"
+    displayName: Init and run build
+- job: 2
+  displayname: Publish results
+  condition: succeededOrFailed()
+  steps:
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFormat: 'NUnit'
+      testResultsFiles: |
+        BuildOutput/ScriptAnalyzer*.xml
+        BuildOutput/TestResults*.xml
+      testRunTitle: 'PSScriptAnalyzer and Pester'
+  - task: PublishCodeCoverageResults@1
+    inputs:
+      codeCoverageTool: 'JaCoCo'
+      summaryFileLocation: '$(System.DefaultWorkingDirectory)/BuildOutput/CodeCoverage*.xml'
+      pathToSources: '$(System.DefaultWorkingDirectory)'
