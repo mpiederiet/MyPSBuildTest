@@ -22,7 +22,6 @@ steps:
     summaryFileLocation: '$(System.DefaultWorkingDirectory)/BuildOutput/CodeCoverage*.xml'
     pathToSources: '$(System.DefaultWorkingDirectory)'
     condition: succeededOrFailed()
-  errorActionPreference: continue
   continueOnError: true
 - task: PublishTestResults@2
   inputs:
@@ -32,5 +31,4 @@ steps:
       BuildOutput/TestResults*.xml
     testRunTitle: 'PSScriptAnalyzer and Pester'
     condition: succeededOrFailed()
-  errorActionPreference: continue
   continueOnError: true
