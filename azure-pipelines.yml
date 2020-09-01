@@ -9,27 +9,28 @@ trigger:
 pool:
   vmImage: 'windows-latest'
 
-jobs:
-- job: InitAndBuild
+steps:
+- powershell: |
+    & "$($Env:BUILD_SOURCESDIRECTORY)\module.build.ps1" -InstallDependencies -Verbose
+    & "$($Env:BUILD_SOURCESDIRECTORY)\module.build.ps1"
   displayName: Init and run build
-  steps:
-  - powershell: |
-      & "$($Env:BUILD_SOURCESDIRECTORY)\module.build.ps1" -InstallDependencies -Verbose
-      & "$($Env:BUILD_SOURCESDIRECTORY)\module.build.ps1"
-    displayName: Init and run build
-- job: PublishResults
-  displayName: Publish results
-  condition: succeededOrFailed()
-  steps:
-  - task: PublishTestResults@2
-    inputs:
-      testResultsFormat: 'NUnit'
-      testResultsFiles: |
-        BuildOutput/ScriptAnalyzer*.xml
-        BuildOutput/TestResults*.xml
-      testRunTitle: 'PSScriptAnalyzer and Pester'
-  - task: PublishCodeCoverageResults@1
-    inputs:
-      codeCoverageTool: 'JaCoCo'
-      summaryFileLocation: '$(System.DefaultWorkingDirectory)/BuildOutput/CodeCoverage*.xml'
-      pathToSources: '$(System.DefaultWorkingDirectory)'
+  errorActionPreference: continue
+  continueOnError: true
+- task: PublishCodeCoverageResults@1
+  inputs:
+    codeCoverageTool: 'JaCoCo'
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/BuildOutput/CodeCoverage*.xml'
+    pathToSources: '$(System.DefaultWorkingDirectory)'
+    condition: succeededOrFailed()
+  errorActionPreference: continue
+  continueOnError: true
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'NUnit'
+    testResultsFiles: |
+      BuildOutput/ScriptAnalyzer*.xml
+      BuildOutput/TestResults*.xml
+    testRunTitle: 'PSScriptAnalyzer and Pester'
+    condition: succeededOrFailed()
+  errorActionPreference: continue
+  continueOnError: true
