@@ -14,15 +14,12 @@ steps:
     & "$($Env:BUILD_SOURCESDIRECTORY)\module.build.ps1" -InstallDependencies -Verbose
     & "$($Env:BUILD_SOURCESDIRECTORY)\module.build.ps1"
   displayName: Init and run build
-  errorActionPreference: continue
-  continueOnError: true
 - task: PublishCodeCoverageResults@1
   inputs:
     codeCoverageTool: 'JaCoCo'
     summaryFileLocation: '$(System.DefaultWorkingDirectory)/BuildOutput/CodeCoverage*.xml'
     pathToSources: '$(System.DefaultWorkingDirectory)'
-    condition: succeededOrFailed()
-  continueOnError: true
+  condition: succeededOrFailed()
 - task: PublishTestResults@2
   inputs:
     testResultsFormat: 'NUnit'
@@ -30,5 +27,4 @@ steps:
       BuildOutput/ScriptAnalyzer*.xml
       BuildOutput/TestResults*.xml
     testRunTitle: 'PSScriptAnalyzer and Pester'
-    condition: succeededOrFailed()
-  continueOnError: true
+  condition: succeededOrFailed()
