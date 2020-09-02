@@ -25,6 +25,14 @@ steps:
     testResultsFormat: 'NUnit'
     testResultsFiles: |
       BuildOutput/ScriptAnalyzer*.xml
+    mergeTestResults: false
+    testRunTitle: 'PSScriptAnalyzer'
+  condition: succeededOrFailed()
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'NUnit'
+    testResultsFiles: |
       BuildOutput/TestResults*.xml
-#    testRunTitle: 'PSScriptAnalyzer and Pester'
+    mergeTestResults: false
+    testRunTitle: 'Pester'
   condition: succeededOrFailed()
