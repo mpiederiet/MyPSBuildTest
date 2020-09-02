@@ -26,5 +26,5 @@ steps:
     testResultsFiles: |
       BuildOutput/ScriptAnalyzer*.xml
       BuildOutput/TestResults*.xml
-    testRunTitle: 'PSScriptAnalyzer and Pester'
+#    testRunTitle: 'PSScriptAnalyzer and Pester'
   condition: succeededOrFailed()
